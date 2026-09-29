@@ -9,7 +9,7 @@ type AdminAuthContextType = {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-// ⚠️ CREDENCIALES DE PRUEBA — cuando conectes esto a un backend real,
+// CREDENCIALES DE PRUEBA — cuando conectes esto a un backend real,
 // aquí es donde se hará la llamada a la API en vez de comparar con texto fijo
 const FAKE_COMPANY_SLUG = 'descanso';
 const FAKE_ADMIN_PASSWORD = 'admin123';
