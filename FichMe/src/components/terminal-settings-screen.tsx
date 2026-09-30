@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAdminAuth } from '@/context/admin-auth-context';
@@ -15,7 +15,7 @@ type Props = {
 
 export function TerminalSettingsScreen({ onBack }: Props) {
   const { companySlug, logout, verifyPassword } = useAdminAuth();
-  const { settings, updateSettings } = useTerminalSettings();
+  const { settings, updateSettings, resetOnboarding } = useTerminalSettings();
   const { t } = useI18n();
 
   // Mientras unlocked sea false, se pide la contraseña antes de mostrar nada más
@@ -31,6 +31,17 @@ export function TerminalSettingsScreen({ onBack }: Props) {
       setError(t('settings.wrongPassword'));
     }
   }
+
+  function handleReset() {
+  Alert.alert(
+    t('settings.resetConfirmTitle'),
+    t('settings.resetConfirmMessage'),
+    [
+      { text: t('settings.resetConfirmCancel'), style: 'cancel' },
+      { text: t('settings.resetConfirmAccept'), style: 'destructive', onPress: resetOnboarding },
+    ]
+  );
+}
 
   // Pantalla 1: pedir la contraseña
   if (!unlocked) {
@@ -127,6 +138,14 @@ export function TerminalSettingsScreen({ onBack }: Props) {
         <Text className="mb-8 text-base text-slate-900 dark:text-white">
           {companySlug}.fichme.com
         </Text>
+
+        <Pressable
+            onPress={handleReset}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="mb-6 items-center rounded-lg border border-red-300 dark:border-red-800 py-3">
+            <Text className="text-red-600 dark:text-red-400">{t('settings.resetButton')}</Text>
+        </Pressable>
+
 
         <View className="mt-auto flex-row justify-between">
           <Pressable onPress={onBack} style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="px-4 py-3">

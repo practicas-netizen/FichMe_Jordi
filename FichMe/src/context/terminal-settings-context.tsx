@@ -17,6 +17,7 @@ type TerminalSettingsContextType = {
   isLoadingSettings: boolean;
   updateSettings: (partial: Partial<TerminalSettings>) => void;
   completeOnboarding: () => void;
+  resetOnboarding: () => void;
 };
 
 const defaultSettings: TerminalSettings = {
@@ -69,9 +70,13 @@ export function TerminalSettingsProvider({ children }: { children: ReactNode }) 
     setSettings((prev) => ({ ...prev, onboardingCompleted: true }));
   }
 
+  function resetOnboarding() {
+    setSettings(defaultSettings);
+  }
+
   return (
     <TerminalSettingsContext.Provider
-      value={{ settings, isLoadingSettings, updateSettings, completeOnboarding }}>
+      value={{ settings, isLoadingSettings, updateSettings, completeOnboarding, resetOnboarding }}>
       {children}
     </TerminalSettingsContext.Provider>
   );

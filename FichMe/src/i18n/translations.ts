@@ -42,6 +42,11 @@ export const translations = {
     companyLabel: 'Empresa',
     back: 'Volver',
     logout: 'Cerrar sesión',
+    resetButton: 'Restablecer configuración del terminal',
+    resetConfirmTitle: '¿Restablecer terminal?',
+    resetConfirmMessage: 'Se borrará el logo, los colores y el nombre de la empresa, y tendrás que volver a completar la configuración inicial.',
+    resetConfirmCancel: 'Cancelar',
+    resetConfirmAccept: 'Restablecer',
     },
   },
   en: {
@@ -87,6 +92,11 @@ export const translations = {
     companyLabel: 'Company',
     back: 'Back',
     logout: 'Log out',
+    resetButton: 'Reset terminal settings',
+    resetConfirmTitle: 'Reset terminal?',
+    resetConfirmMessage: 'This will clear the logo, colors and company name, and you will need to go through the initial setup again.',
+    resetConfirmCancel: 'Cancel',
+    resetConfirmAccept: 'Reset',
     },
   },
 } as const;
