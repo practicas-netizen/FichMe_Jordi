@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -36,6 +36,13 @@ export function OnboardingScreen() {
   }
 
   function goNext() {
+
+    // Validación: si estamos en la pantalla de empresa, asegurarnos de que hay nombre y logo
+    if (step === 'company' && (!settings.companyName || !settings.logoUri)) {
+      Alert.alert(t('onboarding.missingFieldsTitle'), t('onboarding.missingFieldsMessage'));
+      return;
+    }
+
     if (stepIndex === STEPS.length - 1) {
       completeOnboarding();
       return;
