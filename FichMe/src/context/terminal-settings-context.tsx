@@ -1,55 +1,77 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// El formato de fecha solo puede ser uno de estos dos valores
 export type DateFormatOption = 'short' | 'long';
 
-// Todo lo que se configura durante el onboarding vive aquí
 type TerminalSettings = {
-  onboardingCompleted: boolean; // ¿ya terminó de configurar el terminal?
+  onboardingCompleted: boolean;
   companyName: string;
-  logoUri: string | null;       // null = todavía no eligió logo
-  backgroundColor: string;      // color en formato hexadecimal, ej: '#0F172A'
+  logoUri: string | null;
+  backgroundColor: string;
   pinButtonColor: string;
   dateFormat: DateFormatOption;
 };
 
 type TerminalSettingsContextType = {
   settings: TerminalSettings;
-  updateSettings: (partial: Partial<TerminalSettings>) => void; // "partial" = puedes actualizar solo algunos campos, no todos
+  isLoadingSettings: boolean;
+  updateSettings: (partial: Partial<TerminalSettings>) => void;
   completeOnboarding: () => void;
 };
 
-// Valores con los que arranca la app la primera vez (antes de configurar nada)
 const defaultSettings: TerminalSettings = {
   onboardingCompleted: false,
   companyName: '',
   logoUri: null,
-  backgroundColor: '#0F172A', // azul oscuro por defecto
-  pinButtonColor: '#2563EB',  // azul para los botones
+  backgroundColor: '#0F172A',
+  pinButtonColor: '#2563EB',
   dateFormat: 'long',
 };
+
+const STORAGE_KEY = '@fichme/terminal-settings';
 
 const TerminalSettingsContext = createContext<TerminalSettingsContextType | undefined>(undefined);
 
 export function TerminalSettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<TerminalSettings>(defaultSettings);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
-  // Actualiza SOLO los campos que le pases, sin borrar el resto.
-  // Ejemplo: updateSettings({ backgroundColor: '#FFFFFF' })
-  // no toca companyName, logoUri, etc. — los conserva tal cual estaban
+  // Al arrancar, lee lo que hubiera guardado
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const saved = await AsyncStorage.getItem(STORAGE_KEY);
+        if (saved) setSettings(JSON.parse(saved));
+      } catch (e) {
+        console.warn('No se pudo leer la configuración guardada', e);
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    }
+    loadSettings();
+  }, []);
+
+  // Cada vez que "settings" cambia y ya terminamos de cargar, lo guarda.
+  // El "if (isLoadingSettings) return" evita que, nada más arrancar,
+  // se sobrescriba lo guardado con los valores por defecto antes de leerlo.
+  useEffect(() => {
+    if (isLoadingSettings) return;
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch((e) =>
+      console.warn('No se pudo guardar la configuración', e)
+    );
+  }, [settings, isLoadingSettings]);
+
   function updateSettings(partial: Partial<TerminalSettings>) {
     setSettings((prev) => ({ ...prev, ...partial }));
-    // "...prev" copia todo lo que ya había, y "...partial" pisa
-    // solo los campos nuevos que le pasaste
   }
 
-  // Se llama al terminar el paso 4 del onboarding (pulsar "Finalizar")
   function completeOnboarding() {
     setSettings((prev) => ({ ...prev, onboardingCompleted: true }));
   }
 
   return (
-    <TerminalSettingsContext.Provider value={{ settings, updateSettings, completeOnboarding }}>
+    <TerminalSettingsContext.Provider
+      value={{ settings, isLoadingSettings, updateSettings, completeOnboarding }}>
       {children}
     </TerminalSettingsContext.Provider>
   );
