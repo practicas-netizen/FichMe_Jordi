@@ -8,22 +8,9 @@ import { useI18n } from '@/i18n/i18n-context';
 import { isColorDark } from '@/utils/colors';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { BACKGROUND_COLORS, PIN_BUTTON_COLORS } from '@/constants/palette';
+import { TerminalPreview } from '@/components/terminal-preview';
 
 const STEPS = ['company', 'colors', 'pin', 'date'] as const;
-
-export function TerminalPreview() {
-  const { settings } = useTerminalSettings();
-  const isPinButtonDark = isColorDark(settings.pinButtonColor);
-  const pinTextColor = isPinButtonDark ? '#FFFFFF' : '#0F172A';
-
-  return (
-    <View className="h-24 w-full rounded-xl mb-8 items-center justify-center" style={{ backgroundColor: settings.backgroundColor }}>
-      <View className="rounded-full h-16 w-16 items-center justify-center" style={{ backgroundColor: settings.pinButtonColor }}>
-        <Text style={{ color: pinTextColor }}>••••</Text>
-      </View>
-    </View>
-  );
-}
 
 export function OnboardingScreen() {
   const { settings, updateSettings, completeOnboarding } = useTerminalSettings();

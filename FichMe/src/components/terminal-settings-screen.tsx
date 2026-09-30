@@ -7,7 +7,7 @@ import { useTerminalSettings } from '@/context/terminal-settings-context';
 import { useI18n } from '@/i18n/i18n-context';
 import { BACKGROUND_COLORS, PIN_BUTTON_COLORS } from '@/constants/palette';
 import { isColorDark } from '@/utils/colors';
-import { TerminalPreview } from '@/components/onboarding-screen';
+import { TerminalPreview } from '@/components/terminal-preview';
 
 type Props = {
   onBack: () => void;
