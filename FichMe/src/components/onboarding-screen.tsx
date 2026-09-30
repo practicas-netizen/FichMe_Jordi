@@ -7,13 +7,11 @@ import { useTerminalSettings, type DateFormatOption } from '@/context/terminal-s
 import { useI18n } from '@/i18n/i18n-context';
 import { isColorDark } from '@/utils/colors';
 import { ThemeToggle } from '@/components/theme-toggle';
-
-const BACKGROUND_COLORS = ['#FFFFFF', '#15243C', '#3A43A1', '#7C2D12', '#0F172A', '#3B0764'];
-const PIN_BUTTON_COLORS = ['#2563EB', '#059669', '#DC2626', '#D97706', '#7C3AED', '#0EA5E9'];
+import { BACKGROUND_COLORS, PIN_BUTTON_COLORS } from '@/constants/palette';
 
 const STEPS = ['company', 'colors', 'pin', 'date'] as const;
 
-function TerminalPreview() {
+export function TerminalPreview() {
   const { settings } = useTerminalSettings();
   const isPinButtonDark = isColorDark(settings.pinButtonColor);
   const pinTextColor = isPinButtonDark ? '#FFFFFF' : '#0F172A';

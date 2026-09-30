@@ -1,0 +1,2 @@
+export const BACKGROUND_COLORS = ['#FFFFFF', '#15243C', '#3A43A1', '#7C2D12', '#0F172A', '#3B0764'];
+export const PIN_BUTTON_COLORS = ['#2563EB', '#059669', '#DC2626', '#D97706', '#7C3AED', '#0EA5E9'];

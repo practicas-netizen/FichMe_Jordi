@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-// Forma de la caja: si está logueado o no, y las funciones para entrar/salir
 type AdminAuthContextType = {
   isAdminLoggedIn: boolean;
+  companySlug: string;
   login: (companySlug: string, password: string) => boolean;
   logout: () => void;
+  verifyPassword: (password: string) => boolean;
 };
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
@@ -15,32 +16,33 @@ const FAKE_COMPANY_SLUG = 'descanso';
 const FAKE_ADMIN_PASSWORD = 'admin123';
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
-  // false = "todavía no ha entrado nadie"
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [companySlug, setCompanySlug] = useState('');
 
-  // Esta función la llama la pantalla de login cuando el usuario pulsa "Iniciar sesión"
-  function login(companySlug: string, password: string) {
-    // Comparamos lo que escribió el usuario con las credenciales fijas de arriba.
-    // .trim() quita espacios accidentales al principio/final,
-    // .toLowerCase() ignora si escribió mayúsculas o minúsculas
+  function login(slug: string, password: string) {
     const isValid =
-      companySlug.trim().toLowerCase() === FAKE_COMPANY_SLUG &&
+      slug.trim().toLowerCase() === FAKE_COMPANY_SLUG &&
       password === FAKE_ADMIN_PASSWORD;
 
-    // Si es correcto, actualizamos el estado a "logueado"
-    if (isValid) setIsAdminLoggedIn(true);
-
-    // Devolvemos true/false para que la pantalla de login sepa si mostrar error o no
+    if (isValid) {
+      setIsAdminLoggedIn(true);
+      setCompanySlug(slug.trim().toLowerCase());
+    }
     return isValid;
   }
 
-  // Se usa cuando mantienes pulsado en el terminal para "salir" y volver al login
   function logout() {
     setIsAdminLoggedIn(false);
   }
 
+  // Vuelve a comprobar la contraseña, sin cerrar sesión ni tocar isAdminLoggedIn.
+  // Usa la pantalla de ajustes para pedir la contraseña otra vez antes de entrar.
+  function verifyPassword(password: string) {
+    return password === FAKE_ADMIN_PASSWORD;
+  }
+
   return (
-    <AdminAuthContext.Provider value={{ isAdminLoggedIn, login, logout }}>
+    <AdminAuthContext.Provider value={{ isAdminLoggedIn, companySlug, login, logout, verifyPassword }}>
       {children}
     </AdminAuthContext.Provider>
   );
