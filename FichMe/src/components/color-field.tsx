@@ -96,7 +96,6 @@ export function ColorField({ colors, value, onChange, selectedBorderColor = '#25
     if (hsvToHex(hsv.h, hsv.s, hsv.v) !== value.toUpperCase()) {
       setHsv(hexToHsv(value));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const isPreset = colors.some((c) => c.toLowerCase() === value.toLowerCase());
