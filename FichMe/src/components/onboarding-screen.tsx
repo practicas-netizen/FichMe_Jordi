@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -36,6 +36,12 @@ export function OnboardingScreen() {
   }
 
   function goNext() {
+    // En el primer paso, nombre y logo son obligatorios
+    if (step === 'company' && (!settings.companyName.trim() || !settings.logoUri)) {
+      Alert.alert(t('onboarding.missingFieldsTitle'), t('onboarding.missingFieldsMessage'));
+      return;
+    }
+
     if (stepIndex === STEPS.length - 1) {
       completeOnboarding();
       return;
@@ -95,9 +101,10 @@ export function OnboardingScreen() {
               </View>
             )}
 
+            {/* Paso de colores: ScrollView por si el selector libre no cabe en pantallas pequeñas */}
             {step === 'colors' && (
-              <View>
-                <TerminalPreview />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <TerminalPreview backgroundColor={settings.backgroundColor} pinButtonColor={settings.pinButtonColor} />
                 <Text className="mb-3 text-sm text-slate-600 dark:text-slate-300">{t('onboarding.backgroundLabel')}</Text>
                 <ColorField
                   colors={BACKGROUND_COLORS}
@@ -106,12 +113,12 @@ export function OnboardingScreen() {
                   selectedBorderColor="#2563EB"
                   size={56}
                 />
-              </View>
+              </ScrollView>
             )}
 
             {step === 'pin' && (
-              <View>
-                <TerminalPreview />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <TerminalPreview backgroundColor={settings.backgroundColor} pinButtonColor={settings.pinButtonColor} />
                 <Text className="mb-3 text-sm text-slate-600 dark:text-slate-300">{t('onboarding.pinButtonLabel')}</Text>
                 <ColorField
                   colors={PIN_BUTTON_COLORS}
@@ -120,7 +127,7 @@ export function OnboardingScreen() {
                   selectedBorderColor="#0F172A"
                   size={56}
                 />
-              </View>
+              </ScrollView>
             )}
 
             {step === 'date' && (
