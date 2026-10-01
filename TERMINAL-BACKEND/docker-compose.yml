@@ -1,0 +1,54 @@
+# Base de datos local de FichMe (MySQL + Adminer).
+#
+#   1. Pon el .env en esta carpeta (junto a este fichero).
+#   2. docker compose up -d
+#
+# La primera vez crea las tablas y los datos de prueba (db/init).
+# Para borrar todo y empezar de cero: docker compose down -v && docker compose up -d
+#
+#   MySQL:   localhost:3310 (o el DB_PORT del .env)
+#   Adminer: http://localhost:8082 (servidor: mysql)
+
+name: fichme
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: fichme-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Falta DB_ROOT_PASSWORD en el .env}
+      MYSQL_DATABASE: ${DB_NAME:?Falta DB_NAME en el .env}
+      MYSQL_USER: ${DB_USER:?Falta DB_USER en el .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Falta DB_PASSWORD en el .env}
+      TZ: UTC
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      # Solo accesible desde este ordenador, no desde la red
+      - "127.0.0.1:${DB_PORT:-3310}:3306"
+    volumes:
+      # Aquí se guardan los datos. Sin esto se perderían al borrar el contenedor
+      - mysql_data:/var/lib/mysql
+      # Los .sql de esta carpeta se ejecutan solo la primera vez (con la base vacía)
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Web para ver y editar las tablas: http://localhost:8082
+  adminer:
+    image: adminer
+    container_name: fichme-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    ports:
+      - "127.0.0.1:${ADMINER_PORT:-8082}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

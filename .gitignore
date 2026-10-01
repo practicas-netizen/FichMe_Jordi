@@ -1,0 +1,57 @@
+# ============================================================
+#  .gitignore de todo el proyecto (TERMINAL-BACKEND + TERMINAL-FRONTEND)
+# ============================================================
+
+# --- Secretos / configuración local ---------------------------
+# El .env se pasa a mano, nunca se sube.
+.env
+.env.*
+*.pem
+*.key
+*.p8
+*.p12
+*.jks
+*.mobileprovision
+
+# --- Dependencias (se instalan con npm install) ---------------
+node_modules/
+
+# --- Builds y compilados --------------------------------------
+dist/
+build/
+web-build/
+*.tsbuildinfo
+
+# --- Base de datos / Docker -----------------------------------
+backups/
+*.sql.gz
+*.dump
+
+# --- Expo / React Native (frontend) ---------------------------
+.expo/
+expo-env.d.ts
+.kotlin/
+*.orig.*
+.metro-health-check*
+# Carpetas nativas generadas por Expo
+TERMINAL-FRONTEND/ios/
+TERMINAL-FRONTEND/android/
+
+# --- Logs -----------------------------------------------------
+logs/
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# --- Tests ----------------------------------------------------
+coverage/
+
+# --- Sistema operativo ----------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editores / herramientas (ajustes personales) -------------
+.idea/
+.claude/settings.local.json
