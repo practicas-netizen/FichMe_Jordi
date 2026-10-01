@@ -16,7 +16,7 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 const FAKE_COMPANY_SLUG = 'descanso';
 const FAKE_ADMIN_PASSWORD = 'admin123';
 
-const STORAGE_KEY = '@fichme/admin-session';
+const STORAGE_KEY = '@bridgeone-terminal/admin-session';
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);

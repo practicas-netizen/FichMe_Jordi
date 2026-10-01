@@ -221,7 +221,7 @@ export function TerminalSettingsScreen({ onBack }: Props) {
               {t('settings.companyLabel')}
             </Text>
             <Text className="mb-8 text-base text-slate-900 dark:text-white">
-              {companySlug}.fichme.com
+              {companySlug}.hr.bridgeone.es
             </Text>
 
             <Pressable

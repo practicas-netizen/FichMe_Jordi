@@ -1,4 +1,4 @@
-# Base de datos local de FichMe (MySQL + Adminer).
+# Base de datos local de BridgeOne Terminal (MySQL + Adminer).
 #
 #   1. Pon el .env en esta carpeta (junto a este fichero).
 #   2. docker compose up -d
@@ -9,12 +9,12 @@
 #   MySQL:   localhost:3310 (o el DB_PORT del .env)
 #   Adminer: http://localhost:8082 (servidor: mysql)
 
-name: fichme
+name: bridgeone-terminal
 
 services:
   mysql:
     image: mysql:8.0
-    container_name: fichme-mysql
+    container_name: bridgeone-terminal-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Falta DB_ROOT_PASSWORD en el .env}
@@ -40,7 +40,7 @@ services:
   # Web para ver y editar las tablas: http://localhost:8082
   adminer:
     image: adminer
-    container_name: fichme-adminer
+    container_name: bridgeone-terminal-adminer
     restart: unless-stopped
     environment:
       ADMINER_DEFAULT_SERVER: mysql

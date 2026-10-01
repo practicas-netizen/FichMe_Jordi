@@ -1,10 +1,10 @@
 export const translations = {
   es: {
     login: {
-      title: 'FichMe Admin',
+      title: 'BridgeOne Terminal Admin',
       companyLabel: 'Enlace de tu empresa',
       companyPlaceholder: 'descanso',
-      companySuffix: '.fichme.com',
+      companySuffix: '.hr.bridgeone.es',
       passwordLabel: 'Contraseña',
       passwordPlaceholder: '••••••••',
       submit: 'Iniciar sesión',
@@ -62,10 +62,10 @@ export const translations = {
   },
   en: {
     login: {
-      title: 'FichMe Admin',
+      title: 'BridgeOne Terminal Admin',
       companyLabel: 'Your company link',
       companyPlaceholder: 'descanso',
-      companySuffix: '.fichme.com',
+      companySuffix: '.hr.bridgeone.es',
       passwordLabel: 'Password',
       passwordPlaceholder: '••••••••',
       submit: 'Sign in',

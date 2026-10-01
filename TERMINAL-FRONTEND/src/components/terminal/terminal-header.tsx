@@ -14,7 +14,7 @@ export function TerminalHeader({ companyName, logoUri, textColor, isDark, onPres
       <View className="flex-row items-center gap-3">
         {logoUri && <Image source={{ uri: logoUri }} className="h-10 w-10 rounded-full" />}
         <Text style={{ color: textColor }} className="text-lg font-bold">
-          {companyName || 'FichMe'}
+          {companyName || 'BridgeOne Terminal'}
         </Text>
       </View>
 

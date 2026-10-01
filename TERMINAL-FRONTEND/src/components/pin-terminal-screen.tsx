@@ -11,8 +11,8 @@ import { TerminalClock } from '@/components/terminal/terminal-clock';
 import { PinDots } from '@/components/terminal/pin-dots';
 import { PinKeypad } from '@/components/terminal/pin-keypad';
 
-const FAKE_PIN = '1234'; // credencial de prueba — la sustituirá la validación real del backend
-const PIN_LENGTH = 4;
+const FAKE_PIN = '123456'; // credencial de prueba — la sustituirá la validación real del backend
+const PIN_LENGTH = 6;
 
 export function PinTerminalScreen() {
   const { settings } = useTerminalSettings();

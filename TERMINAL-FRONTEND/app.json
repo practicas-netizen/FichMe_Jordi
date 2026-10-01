@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "FichMe",
-    "slug": "FichMe",
+    "name": "BridgeOne Terminal",
+    "slug": "bridgeone-terminal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "fichme",
+    "scheme": "bridgeone-terminal",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"

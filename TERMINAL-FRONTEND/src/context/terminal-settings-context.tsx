@@ -29,7 +29,7 @@ const defaultSettings: TerminalSettings = {
   dateFormat: 'long',
 };
 
-const STORAGE_KEY = '@fichme/terminal-settings';
+const STORAGE_KEY = '@bridgeone-terminal/terminal-settings';
 const SAVE_DELAY_MS = 500; // evita escribir en el almacenamiento en cada frame mientras se arrastra un color
 
 const TerminalSettingsContext = createContext<TerminalSettingsContextType | undefined>(undefined);
