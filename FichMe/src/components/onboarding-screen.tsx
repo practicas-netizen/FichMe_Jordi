@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Alert, Image, Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
 import { useTerminalSettings, type DateFormatOption } from '@/context/terminal-settings-context';
 import { useI18n } from '@/i18n/i18n-context';
-import { isColorDark } from '@/utils/colors';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { BACKGROUND_COLORS, PIN_BUTTON_COLORS } from '@/constants/palette';
+import { ColorField } from '@/components/color-field';
 import { TerminalPreview } from '@/components/terminal-preview';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const STEPS = ['company', 'colors', 'pin', 'date'] as const;
 
@@ -36,13 +36,6 @@ export function OnboardingScreen() {
   }
 
   function goNext() {
-
-    // Validación: si estamos en la pantalla de empresa, asegurarnos de que hay nombre y logo
-    if (step === 'company' && (!settings.companyName || !settings.logoUri)) {
-      Alert.alert(t('onboarding.missingFieldsTitle'), t('onboarding.missingFieldsMessage'));
-      return;
-    }
-
     if (stepIndex === STEPS.length - 1) {
       completeOnboarding();
       return;
@@ -106,23 +99,13 @@ export function OnboardingScreen() {
               <View>
                 <TerminalPreview />
                 <Text className="mb-3 text-sm text-slate-600 dark:text-slate-300">{t('onboarding.backgroundLabel')}</Text>
-                <View className="mb-6 flex-row flex-wrap gap-3">
-                  {BACKGROUND_COLORS.map((color) => (
-                    <Pressable
-                      key={color}
-                      onPress={() => updateSettings({ backgroundColor: color })}
-                      className="h-14 w-14 rounded-full border-2 items-center justify-center"
-                      style={{
-                        backgroundColor: color,
-                        borderColor: settings.backgroundColor === color ? '#2563EB' : 'transparent',
-                      }}
-                    >
-                      {settings.backgroundColor === color && (
-                        <Text style={{ color: isColorDark(color) ? '#FFFFFF' : '#0F172A' }}>✓</Text>
-                      )}
-                    </Pressable>
-                  ))}
-                </View>
+                <ColorField
+                  colors={BACKGROUND_COLORS}
+                  value={settings.backgroundColor}
+                  onChange={(color) => updateSettings({ backgroundColor: color })}
+                  selectedBorderColor="#2563EB"
+                  size={56}
+                />
               </View>
             )}
 
@@ -130,23 +113,13 @@ export function OnboardingScreen() {
               <View>
                 <TerminalPreview />
                 <Text className="mb-3 text-sm text-slate-600 dark:text-slate-300">{t('onboarding.pinButtonLabel')}</Text>
-                <View className="flex-row flex-wrap gap-3">
-                  {PIN_BUTTON_COLORS.map((color) => (
-                    <Pressable
-                      key={color}
-                      onPress={() => updateSettings({ pinButtonColor: color })}
-                      className="h-14 w-14 rounded-full border-2 items-center justify-center"
-                      style={{
-                        backgroundColor: color,
-                        borderColor: settings.pinButtonColor === color ? '#0F172A' : 'transparent',
-                      }}
-                    >
-                      {settings.pinButtonColor === color && (
-                        <Text style={{ color: isColorDark(color) ? '#FFFFFF' : '#0F172A' }}>✓</Text>
-                      )}
-                    </Pressable>
-                  ))}
-                </View>
+                <ColorField
+                  colors={PIN_BUTTON_COLORS}
+                  value={settings.pinButtonColor}
+                  onChange={(color) => updateSettings({ pinButtonColor: color })}
+                  selectedBorderColor="#0F172A"
+                  size={56}
+                />
               </View>
             )}
 

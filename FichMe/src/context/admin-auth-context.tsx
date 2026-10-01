@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type AdminAuthContextType = {
   isAdminLoggedIn: boolean;
   companySlug: string;
-  isLoadingAuth: boolean; // true mientras se comprueba si ya había sesión guardada
+  isLoadingAuth: boolean;
   login: (companySlug: string, password: string) => boolean;
   logout: () => void;
   verifyPassword: (password: string) => boolean;
@@ -12,13 +12,10 @@ type AdminAuthContextType = {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-// CREDENCIALES DE PRUEBA — cuando conectes esto a un backend real,
-// aquí es donde se hará la llamada a la API en vez de comparar con texto fijo
+// Credenciales de prueba — las sustituirá la validación real contra el backend de HR
 const FAKE_COMPANY_SLUG = 'descanso';
 const FAKE_ADMIN_PASSWORD = 'admin123';
 
-// Clave con la que se guarda en AsyncStorage. Ponerle un prefijo (@fichme/)
-// es una convención habitual para no chocar con claves de otras librerías.
 const STORAGE_KEY = '@fichme/admin-session';
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
@@ -26,7 +23,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [companySlug, setCompanySlug] = useState('');
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
-  // Al arrancar la app, intenta leer una sesión guardada
   useEffect(() => {
     async function loadSession() {
       try {
@@ -52,7 +48,6 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (isValid) {
       setIsAdminLoggedIn(true);
       setCompanySlug(cleanSlug);
-      // Guarda la sesión para la próxima vez que se abra la app
       AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ companySlug: cleanSlug })).catch((e) =>
         console.warn('No se pudo guardar la sesión', e)
       );
@@ -70,8 +65,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AdminAuthContext.Provider
-      value={{ isAdminLoggedIn, companySlug, isLoadingAuth, login, logout, verifyPassword }}>
+    <AdminAuthContext.Provider value={{ isAdminLoggedIn, companySlug, isLoadingAuth, login, logout, verifyPassword }}>
       {children}
     </AdminAuthContext.Provider>
   );

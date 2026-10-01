@@ -30,6 +30,7 @@ const defaultSettings: TerminalSettings = {
 };
 
 const STORAGE_KEY = '@fichme/terminal-settings';
+const SAVE_DELAY_MS = 500; // evita escribir en el almacenamiento en cada frame mientras se arrastra un color
 
 const TerminalSettingsContext = createContext<TerminalSettingsContextType | undefined>(undefined);
 
@@ -37,7 +38,6 @@ export function TerminalSettingsProvider({ children }: { children: ReactNode }) 
   const [settings, setSettings] = useState<TerminalSettings>(defaultSettings);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
-  // Al arrancar, lee lo que hubiera guardado
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -52,14 +52,16 @@ export function TerminalSettingsProvider({ children }: { children: ReactNode }) 
     loadSettings();
   }, []);
 
-  // Cada vez que "settings" cambia y ya terminamos de cargar, lo guarda.
-  // El "if (isLoadingSettings) return" evita que, nada más arrancar,
-  // se sobrescriba lo guardado con los valores por defecto antes de leerlo.
   useEffect(() => {
     if (isLoadingSettings) return;
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch((e) =>
-      console.warn('No se pudo guardar la configuración', e)
-    );
+
+    const timeoutId = setTimeout(() => {
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch((e) =>
+        console.warn('No se pudo guardar la configuración', e)
+      );
+    }, SAVE_DELAY_MS);
+
+    return () => clearTimeout(timeoutId);
   }, [settings, isLoadingSettings]);
 
   function updateSettings(partial: Partial<TerminalSettings>) {
