@@ -6,6 +6,7 @@
 # El .env se pasa a mano, nunca se sube.
 .env
 .env.*
+!.env.example
 *.pem
 *.key
 *.p8
