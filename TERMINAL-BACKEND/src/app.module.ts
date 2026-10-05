@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule  } from '@nestjs/typeorm';
+import { EmployeesModule } from './employees/employees.modules';
+import { TerminalModule } from './terminal/terminal.modules';
+import { TimeEntry } from './terminal/time-entry.entity';
 
 @Module({
  imports: [
@@ -10,15 +13,19 @@ import { TypeOrmModule  } from '@nestjs/typeorm';
     inject: [ConfigService],
     useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: config.get<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: 'bridgeone_terminal_user',
-        password: 'Gh9kpxYuCG5nrfaP5KeMbzJ3',
-        database: 'bridgeone_terminal',
+        host: config.getOrThrow<string>('DB_HOST'),
+        port: Number(config.getOrThrow<number>('DB_PORT')),
+        username: config.getOrThrow<string>('DB_USER'),
+        password: config.getOrThrow<string>('DB_PASSWORD'),
+        database: config.getOrThrow<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false, // Set to false in production to avoid data loss
+        synchronize: false, // False = No perder datos en producción
+        timezone: 'Z',
     }),
   }),
+  EmployeesModule,
+  TerminalModule,
+  TimeEntry
 ],
   controllers: [AppController],
 })
