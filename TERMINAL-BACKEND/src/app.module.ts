@@ -2,9 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule  } from '@nestjs/typeorm';
-import { EmployeesModule } from './employees/employees.modules';
-import { TerminalModule } from './terminal/terminal.modules';
-import { TimeEntry } from './terminal/time-entry.entity';
+import { EmployeesModule } from './employees/employees.module';
+import { TerminalModule } from './terminal/terminal.module';
 
 @Module({
  imports: [
@@ -24,8 +23,7 @@ import { TimeEntry } from './terminal/time-entry.entity';
     }),
   }),
   EmployeesModule,
-  TerminalModule,
-  TimeEntry
+  TerminalModule
 ],
   controllers: [AppController],
 })
