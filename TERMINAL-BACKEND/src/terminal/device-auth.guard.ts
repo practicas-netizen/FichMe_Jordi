@@ -1,7 +1,7 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TerminalDevice } from './terminal-device.entity';
+import { TerminalDevice, TerminalDeviceStatus } from './terminal-device.entity';
 import { hashToken } from './token.util';
 
 @Injectable()
@@ -37,6 +37,19 @@ export class DeviceAuthGuard implements CanActivate {
     if (!device) {
       throw this.invalidToken();
     }
+
+    // tablet desvinculada
+    if (device.status !== TerminalDeviceStatus.ACTIVE) {
+        throw new ForbiddenException({
+            statusCode: 403,
+            code: 'DEVICE_REVOKED',
+            message: 'Esta tablet ha sido desvinculada, actívala de nuevo',
+        });
+    }
+
+    // registar la actividad de la tablet y dejarla en petición
+    await this.terminalDeviceRepository.update(device.id, { lastSeenAt: new Date() });
+    request.device = device;
 
     return true;
   }
