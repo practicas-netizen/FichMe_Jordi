@@ -1,6 +1,6 @@
 import { Body, Post, Controller } from "@nestjs/common";
 import { TerminalService } from "./terminal.service";
-import { ActivateTerminalDto } from "./DTO/activate-terminal.dto";
+import { ActivateTerminalDto } from "./dto/activate-terminal.dto";
 
 @Controller('terminal')
 export class TerminalController {
