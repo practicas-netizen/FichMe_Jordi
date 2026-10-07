@@ -13,6 +13,7 @@ async function bootstrap() {
   .setTitle('Swagger')
   .setDescription('Ver endpoints de las API')
   .setVersion('1.0')
+  .addBearerAuth()
   .build();
 
 const document = SwaggerModule.createDocument(app, config);
