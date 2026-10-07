@@ -13,16 +13,19 @@ async function bootstrap() {
   .setTitle('Swagger')
   .setDescription('Ver endpoints de las API')
   .setVersion('1.0')
+  .addBearerAuth()
   .build();
 
 const document = SwaggerModule.createDocument(app, config);
-SwaggerModule.setup('docs', app, document);
+SwaggerModule.setup('docs', app, document, {
+  swaggerOptions: { persistAuthorization: true },
+});
 
   if (enableCors) {
     app.enableCors();
   }
 
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
   await app.listen(apiPort);
 }
