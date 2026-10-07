@@ -6,11 +6,12 @@ import { TerminalSettings } from "./terminal-settings.entity";
 import { TimeEntry } from "./time-entry.entity";
 import { TerminalController } from "./terminal.controller";
 import { TerminalService } from "./terminal.service";
+import { DeviceAuthGuard } from "./device-auth.guard";
 
 
 @Module({
   imports: [ TypeOrmModule.forFeature([TerminalDevice, ActivationCode, TerminalSettings, TimeEntry]) ],
   controllers: [TerminalController],
-    providers: [TerminalService],
+    providers: [TerminalService, DeviceAuthGuard],
 })
 export class TerminalModule {}
