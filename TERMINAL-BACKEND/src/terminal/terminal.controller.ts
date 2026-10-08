@@ -5,7 +5,7 @@ import { DeviceAuthGuard } from "./device-auth.guard";
 import { CurrentDevice } from './current-device.decorator';
 import { TerminalDevice } from './terminal-device.entity';
 import { ApiBearerAuth } from "@nestjs/swagger";
-import { UpdateSettingsDto } from "./dto/update-settigs.dto";
+import { UpdateSettingsDto } from "./dto/update-settings.dto";
 import { SetAdminPinDto } from "./dto/set-admin-pin.dto";
 import { VerifyAdminPinDto } from "./dto/verify-admin-pin.dto";
 

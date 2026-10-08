@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule  } from '@nestjs/typeorm';
 import { EmployeesModule } from './employees/employees.module';
 import { TerminalModule } from './terminal/terminal.module';
+import { TimeEntriesModule } from './time-entries/time-entries.module';
 
 @Module({
  imports: [
@@ -23,7 +24,8 @@ import { TerminalModule } from './terminal/terminal.module';
     }),
   }),
   EmployeesModule,
-  TerminalModule
+  TerminalModule,
+  TimeEntriesModule
 ],
   controllers: [AppController],
 })

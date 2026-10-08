@@ -4,7 +4,7 @@ import { ActivationCode } from './activation-code.entity';
 import { generateToken } from './token.util';
 import { TerminalDevice, TerminalDeviceStatus } from './terminal-device.entity';
 import { TerminalSettings } from './terminal-settings.entity';
-import { UpdateSettingsDto } from './dto/update-settigs.dto';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 import { SetAdminPinDto } from './dto/set-admin-pin.dto';
 import * as bcrypt from 'bcrypt';
 
