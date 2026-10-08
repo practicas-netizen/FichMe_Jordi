@@ -10,6 +10,7 @@ import { DeviceAuthGuard } from "./device-auth.guard";
 
 
 @Module({
+  exports: [TypeOrmModule],
   imports: [ TypeOrmModule.forFeature([TerminalDevice, ActivationCode, TerminalSettings, TimeEntry]) ],
   controllers: [TerminalController],
     providers: [TerminalService, DeviceAuthGuard],

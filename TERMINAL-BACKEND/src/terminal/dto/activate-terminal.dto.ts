@@ -1,5 +1,5 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class ActivateTerminalDto{
     @ApiProperty({ example: 'TEST-0001' })
