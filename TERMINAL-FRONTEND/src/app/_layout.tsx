@@ -7,13 +7,12 @@ import { PinTerminalScreen } from '@/components/pin-terminal-screen';
 import { AdminAuthProvider, useAdminAuth } from '@/context/admin-auth-context';
 import { TerminalSettingsProvider, useTerminalSettings } from '@/context/terminal-settings-context';
 import { I18nProvider } from '@/i18n/i18n-context';
-
 import '../../global.css';
 
 function RootFlow() {
   const { isAdminLoggedIn, isLoadingAuth } = useAdminAuth();
   const { settings, isLoadingSettings } = useTerminalSettings();
-
+ 
   // Mientras cualquiera de las dos cosas sigue cargando desde el almacenamiento,
   // no mostramos nada todavía, para no ver un parpadeo del login antes de tiempo
   if (isLoadingAuth || isLoadingSettings) {
