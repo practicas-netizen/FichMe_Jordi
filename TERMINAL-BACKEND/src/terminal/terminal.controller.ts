@@ -16,13 +16,6 @@ export class TerminalController {
     activate(@Body() dto: ActivateTerminalDto) {
         return this.terminalService.activate(dto.code);
     }
-    
-    @Get('ping')
-    @ApiBearerAuth()
-    @UseGuards(DeviceAuthGuard)
-    ping(@CurrentDevice() device: TerminalDevice) {
-      return { ok: true, id: device.id };
-    }
 
     @Get('settings')
     @ApiBearerAuth()
