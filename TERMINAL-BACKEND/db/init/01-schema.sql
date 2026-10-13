@@ -50,16 +50,30 @@ CREATE TABLE terminal_settings (
   CONSTRAINT fk_terminal_settings_device FOREIGN KEY (device_id) REFERENCES terminal_devices (id) ON DELETE CASCADE
 );
 
+-- Empresas donde se puedan ver los empleados.
+CREATE TABLE companies (
+  id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  employee_id INT UNSIGNED NOT NULL,
+  name        VARCHAR(160) NOT NULL,
+  NIF         VARCHAR(9) NOT NULL UNIQUE,
+  telefono    CHAR(15) NOT NULL,
+  email       VARCHAR(255) NOT NULL,
+  IBAN        VARCHAR(34) NOT NULL,
+  PRIMARY KEY (id)
+)
+
 -- Empleados que pueden fichar con su PIN.
 CREATE TABLE employees (
-  id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name       VARCHAR(120) NOT NULL,
-  pin        CHAR(6)      NOT NULL COMMENT '6 dígitos',
-  active     BOOLEAN      NOT NULL DEFAULT TRUE,
-  created_at DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  comapany_id   INT UNSIGNED NOT NULL,
+  name          VARCHAR(120) NOT NULL,
+  pin           CHAR(6)      NOT NULL COMMENT '6 dígitos',
+  active        BOOLEAN      NOT NULL DEFAULT TRUE,
+  created_at    DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (id),
   UNIQUE KEY uq_employees_pin (pin),
   CONSTRAINT chk_employees_pin CHECK (pin REGEXP '^[0-9]{6}$')
+  FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 );
 
 -- Fichajes de entrada y salida. Las fechas se guardan en UTC.
