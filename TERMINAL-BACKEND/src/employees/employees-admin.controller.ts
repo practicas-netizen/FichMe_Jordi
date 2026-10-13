@@ -2,7 +2,9 @@ import { Controller, Get, UseGuards, Post, Delete } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiSecurity, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AdminKeyGuard } from '../admin/admin-key.guard';
 import { EmployeesService } from './employees.service';
-import { EmployeeCreateDto, EmployeeDeleteDto, EmployeeResponseDto } from './dto/employee-response.dto';
+import { EmployeeResponseDto } from './dto/employee-response.dto';
+import { EmployeeCreateDto } from './dto/employee-create.dto';
+import { EmployeeDeleteDto } from './dto/employee-delete.dto';
 
 @Controller('/admin/employees')
 @UseGuards(AdminKeyGuard)

@@ -12,7 +12,7 @@ async function bootstrap() {
   const enableCors = configService.getOrThrow('ENABLE_CORS') === 'true';
   const config = new DocumentBuilder()
     .setTitle('Swagger')
-    .setDescription('Ver endpoints de las API')
+    .setDescription('Aqui és donde va a salir todo los enpoints (admin, empleados, terminales...) que se vayan haciendo durante el proyecto.')
     .setVersion('1.0')
     .addBearerAuth()
     .addApiKey({ type: 'apiKey', in: 'header', name: 'x-admin-key' }, 'admin-key')
