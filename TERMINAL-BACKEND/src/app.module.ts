@@ -5,6 +5,7 @@ import { TypeOrmModule  } from '@nestjs/typeorm';
 import { EmployeesModule } from './employees/employees.module';
 import { TerminalModule } from './terminal/terminal.module';
 import { TimeEntriesModule } from './time-entries/time-entries.module';
+import { AdminController } from './admin/admin.controller';
 
 @Module({
  imports: [
@@ -27,7 +28,7 @@ import { TimeEntriesModule } from './time-entries/time-entries.module';
   TerminalModule,
   TimeEntriesModule
 ],
-  controllers: [AppController],
+  controllers: [AppController, AdminController],
 })
 
 
