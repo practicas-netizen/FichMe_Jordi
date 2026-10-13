@@ -1,4 +1,4 @@
-import { getToken } from "./token-storage";
+import { getToken } from './token-storage';
 
 export class ApiError extends Error {
   constructor(
@@ -21,57 +21,65 @@ export class NetworkError extends Error {
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 if (!API_URL) {
-    throw new Error('Falta poner la variable EXPO_PUBLIC_API_URL en el .env');
+  throw new Error( 'Falta EXPO_PUBLIC_API_URL: créala en TERMINAL-FRONTEND/.env y reinicia con "npx expo start -c"' );
 }
 
-const TIMEOUT_MS = 10000;
+const REQUEST_TIMEOUT_MS = 10_000;
 
-export async function request<T>(
-  ruta: string,
-  metodo: string,
-  cuerpo?: unknown,
-): Promise<T> {
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+
+export async function request<T>(method: HttpMethod, path: string, body?: unknown): Promise<T> {
   const token = await getToken();
-  const cabeceras: Record<string, string> = { 'Content-Type': 'application/json' };
+
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token) {
-    cabeceras['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const controlador = new AbortController();
-  const temporizador = setTimeout(() => controlador.abort(), TIMEOUT_MS);
+  // fetch no tiene tiempo máximo: se cancela a mano pasado el plazo
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   let response: Response;
-  try{
-    response = await fetch(`${API_URL}${ruta}`, {
-        method: metodo,
-        headers: cabeceras,
-        body: cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
-        signal: controlador.signal,
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: controller.signal,
     });
   } catch {
+    // Sin respuesta: sin red, servidor caído o tiempo agotado
     throw new NetworkError('Sin conexión con el servidor');
   } finally {
-    clearTimeout(temporizador);
+    clearTimeout(timeoutId);
   }
 
-  let datos: any = null;
+  // El servidor puede responder algo que no sea JSON, y no debe romper el cliente
+  let data: unknown = null;
   try {
-    datos = await response.json();
+    data = await response.json();
   } catch {
-    // null
+    data = null;
   }
 
   if (!response.ok) {
-    throw new ApiError(
-        response.status,
-        datos?.message ?? 'Error del servidor',
-        datos?.code,
-    );
+    const raw = (data ?? {}) as { code?: unknown; message?: unknown };
+    const code = typeof raw.code === 'string' ? raw.code : undefined;
+    // Los 400 de validación devuelven message como lista de textos
+    const message = Array.isArray(raw.message)
+      ? raw.message.join(', ')
+      : typeof raw.message === 'string'
+        ? raw.message
+        : `Error ${response.status}`;
+    throw new ApiError(response.status, message, code);
   }
-  return datos as T;
+
+  return data as T;
 }
 
-// Para que no escriban el método cada vez
-export const get= <T>(ruta: string) => request<T>(ruta, 'GET');
-export const post = <T>(ruta: string, cuerpo?: unknown) => request<T>(ruta, 'POST', cuerpo);
-export const patch = <T>(ruta: string, cuerpo?: unknown) => request<T>(ruta, 'PATCH', cuerpo);
+export const api = {
+  get: <T>(path: string) => request<T>('GET', path),
+  post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),
+  patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, body),
+};

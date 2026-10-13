@@ -15,6 +15,7 @@ async function bootstrap() {
     .setDescription('Ver endpoints de las API')
     .setVersion('1.0')
     .addBearerAuth()
+    .addApiKey({ type: 'apiKey', in: 'header', name: 'x-admin-key' }, 'admin-key')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
