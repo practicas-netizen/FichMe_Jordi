@@ -7,6 +7,9 @@ export class Employee {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ name: 'company_id' })
+  companyId!: number;
+
   @Column()
   name!: string;
 
