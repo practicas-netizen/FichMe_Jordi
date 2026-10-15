@@ -131,6 +131,7 @@ export class TerminalService {
       const device = manager.create(TerminalDevice, {
         tokenHash,
         status: TerminalDeviceStatus.ACTIVE,
+        companyId: activationCode.companyId,
       });
       await manager.save(device);
 

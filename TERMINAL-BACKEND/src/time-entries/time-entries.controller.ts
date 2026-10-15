@@ -14,6 +14,6 @@ export class TimeEntriesController {
   @ApiBearerAuth()
   @UseGuards(DeviceAuthGuard)
   clock(@CurrentDevice() device: TerminalDevice, @Body() dto: CreateTimeEntryDto) {
-    return this.timeEntriesService.clock(device.id, dto.pin);
+  return this.timeEntriesService.clock(device.id, device.companyId, dto.pin);
   }
 }
