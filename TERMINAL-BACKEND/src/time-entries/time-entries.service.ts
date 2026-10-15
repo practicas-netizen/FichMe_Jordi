@@ -16,6 +16,7 @@ export class TimeEntriesService {
 
   async clock(
     deviceId: number,
+    companyId: number,
     pin: string,
   ): Promise<{ name: string; type: TimeEntryType; clockedAt: Date }> {
     this.assertNotBlocked(deviceId);
@@ -23,7 +24,7 @@ export class TimeEntriesService {
     return this.dataSource.transaction(async (manager) => {
       // Bloquea la fila del empleado: dos peticiones del mismo empleado se ejecutan una detrás de otra
       const employee = await manager.findOne(Employee, {
-        where: { pin, active: true },
+        where: { pin, companyId, active: true },
         lock: { mode: 'pessimistic_write' },
       });
 

@@ -31,4 +31,7 @@ export class TerminalDevice {
 
     @Column({ name: 'revoked_at', precision: 3, type: 'datetime', nullable: true })
     revokedAt!: Date | null;
+
+    @Column( { name: 'company_id' } )
+    companyId!: number;
 }

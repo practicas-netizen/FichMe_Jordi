@@ -21,10 +21,17 @@ export class NetworkError extends Error {
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 if (!API_URL) {
-  throw new Error( 'Falta EXPO_PUBLIC_API_URL: créala en TERMINAL-FRONTEND/.env y reinicia con "npx expo start -c"' );
+  throw new Error('Falta EXPO_PUBLIC_API_URL: créala en TERMINAL-FRONTEND/.env y reinicia con "npx expo start -c"');
 }
 
 const REQUEST_TIMEOUT_MS = 10_000;
+const UNAUTHORIZED_CODES = ['DEVICE_TOKEN_INVALID', 'DEVICE_REVOKED'];
+
+let onUnauthorized: (() => void) | null = null;
+
+export function setOnUnauthorized(fn: (() => void) | null) {
+  onUnauthorized = fn;
+}
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
@@ -72,6 +79,10 @@ export async function request<T>(method: HttpMethod, path: string, body?: unknow
       : typeof raw.message === 'string'
         ? raw.message
         : `Error ${response.status}`;
+
+    if (code && UNAUTHORIZED_CODES.includes(code)) {
+      onUnauthorized?.();
+    }
     throw new ApiError(response.status, message, code);
   }
 

@@ -21,4 +21,7 @@ export class ActivationCode {
 
     @Column( { name: 'created_at', precision: 3, type: 'datetime' } )
     createdAt!: Date;
+
+    @Column( { name: 'company_id' } )
+    companyId!: number; 
 }

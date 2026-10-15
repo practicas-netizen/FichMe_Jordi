@@ -30,6 +30,8 @@ export const translations = {
     terminal: {
       enterPin: 'Introduce tu PIN',
       success: 'Fichaje registrado',
+      checkedIn: 'Entrada registrada',
+      checkedOut: 'Salida registrada',
       error: 'PIN incorrecto',
     },
     settings: {
@@ -107,6 +109,8 @@ export const translations = {
     terminal: {
       enterPin: 'Enter your PIN',
       success: 'Clock-in recorded',
+      checkedIn: 'Clock-in recorded',
+      checkedOut: 'Clock-out recorded',
       error: 'Incorrect PIN',
     },
     settings: {

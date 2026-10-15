@@ -1,8 +1,9 @@
 import { Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-import { getToken } from '@/api/token-storage';
+import { deleteToken, getToken } from '@/api/token-storage';
 import { ActivationScreen } from '@/components/activation-screen';
+import { setOnUnauthorized } from '@/api/client';
 
 import { AdminLoginScreen } from '@/components/admin-login-screen';
 import { OnboardingScreen } from '@/components/onboarding-screen';
@@ -22,6 +23,19 @@ function RootFlow() {
     getToken()
       .then((token) => setHasToken(!!token))
       .catch(() => setHasToken(false));
+  }, []);
+
+  useEffect(() => {
+    setOnUnauthorized(async () => {
+      try {
+        await deleteToken();
+      } catch {
+        // si falla el borrado del token, igualmente volvemos a la activación
+      } finally {
+        setHasToken(false);
+      }
+    });
+    return () => setOnUnauthorized(null);
   }, []);
   
   // Mientras cualquiera de las tres cosas sigue cargando desde el almacenamiento,

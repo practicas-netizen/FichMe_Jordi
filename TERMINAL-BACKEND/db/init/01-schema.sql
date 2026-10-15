@@ -1,10 +1,21 @@
--- Esquema de la base de datos de UNA empresa.
--- Cada empresa tendrá su propia base de datos con estas mismas tablas,
+-- Esquema compartido por varias empresas.
+-- Las tablas que dependen de una empresa llevan company_id.
 --
 -- Modo quiosco: la tablet se vincula UNA vez con un código de activación y a
 -- partir de ahí se identifica con su token en cada petición.
 
 SET NAMES utf8mb4;
+
+-- Empresas donde se puedan ver los empleados.
+CREATE TABLE companies (
+  id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name     VARCHAR(160) NOT NULL,
+  NIF      VARCHAR(9)   NOT NULL UNIQUE,
+  phone CHAR(15)     NOT NULL,
+  email    VARCHAR(255) NOT NULL,
+  IBAN     VARCHAR(34)  NOT NULL,
+  PRIMARY KEY (id)
+);
 
 -- Tablets vinculadas a la empresa.
 CREATE TABLE terminal_devices (
@@ -16,8 +27,10 @@ CREATE TABLE terminal_devices (
   activated_at   DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   last_seen_at   DATETIME(3)  NULL,
   revoked_at     DATETIME(3)  NULL,
+  company_id     INT UNSIGNED NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_terminal_devices_token (token_hash)
+  UNIQUE KEY uq_terminal_devices_token (token_hash),
+  CONSTRAINT fk_terminal_devices_company FOREIGN KEY (company_id) REFERENCES companies (id)
 );
 
 -- Códigos para vincular una tablet. Son de un solo uso.
@@ -29,9 +42,11 @@ CREATE TABLE activation_codes (
   used_at    DATETIME(3)  NULL     COMMENT 'NULL = todavía no se ha usado',
   device_id  INT UNSIGNED NULL     COMMENT 'Tablet que lo usó',
   created_at DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  company_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_activation_codes_code (code),
-  CONSTRAINT fk_activation_codes_device FOREIGN KEY (device_id) REFERENCES terminal_devices (id)
+  CONSTRAINT fk_activation_codes_device FOREIGN KEY (device_id) REFERENCES terminal_devices (id),
+  CONSTRAINT fk_activation_codes_company FOREIGN KEY (company_id) REFERENCES companies (id)
 );
 
 -- Configuración de cada tablet (lo que hoy guarda terminal-settings-context.tsx).
@@ -49,17 +64,6 @@ CREATE TABLE terminal_settings (
   CONSTRAINT fk_terminal_settings_device FOREIGN KEY (device_id) REFERENCES terminal_devices (id) ON DELETE CASCADE
 );
 
--- Empresas donde se puedan ver los empleados.
-CREATE TABLE companies (
-  id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name     VARCHAR(160) NOT NULL,
-  NIF      VARCHAR(9)   NOT NULL UNIQUE,
-  phone CHAR(15)     NOT NULL,
-  email    VARCHAR(255) NOT NULL,
-  IBAN     VARCHAR(34)  NOT NULL,
-  PRIMARY KEY (id)
-);
-
 -- Empleados que pueden fichar con su PIN.
 CREATE TABLE employees (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -69,7 +73,7 @@ CREATE TABLE employees (
   active     BOOLEAN      NOT NULL DEFAULT TRUE,
   created_at DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (id),
-  UNIQUE KEY uq_employees_pin (pin),
+  UNIQUE KEY uq_employees_company_pin (company_id, pin),
   CONSTRAINT chk_employees_pin CHECK (pin REGEXP '^[0-9]{6}$'),
   CONSTRAINT fk_employees_company FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE
 );
