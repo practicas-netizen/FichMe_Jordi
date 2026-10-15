@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { clock } from '@/api/api';
+import { activateTerminal, clock } from '@/api/api';
 import { ApiError } from '@/api/client';
 import { getErrorMessage } from '@/api/error-message';
 import { useTerminalSettings } from '@/context/terminal-settings-context';
@@ -25,6 +25,7 @@ export function PinTerminalScreen() {
   const [pin, setPin] = useState('');
   const [feedback, setFeedback] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -42,7 +43,9 @@ export function PinTerminalScreen() {
   async function sendPin(enteredPin: string) {
     setIsSending(true);
     try {
-      await clock(enteredPin);
+      const result  = await clock(enteredPin);
+      const key = result.type === 'in' ? 'terminal.checkedIn' : 'terminal.checkedOut';
+      setSuccessMessage(`${t(key)}: ${result.name}`);
       setFeedback('success');
     } catch (e) {
       setErrorMessage(getErrorMessage(e, t));
@@ -55,6 +58,7 @@ export function PinTerminalScreen() {
       setIsSending(false);
       setTimeout(() => {
         setFeedback('idle');
+        setSuccessMessage('');
         setErrorMessage('');
         setPin('');
       }, FEEDBACK_MS);
@@ -87,8 +91,7 @@ export function PinTerminalScreen() {
   const mutedColor = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(15,23,42,0.6)';
   const backspaceColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15,23,42,0.1)';
 
-  const feedbackMessage =
-    feedback === 'success' ? t('terminal.success') : feedback === 'error' ? errorMessage : t('terminal.enterPin');
+  const feedbackMessage = feedback === 'success' ? successMessage : feedback === 'error' ? errorMessage : t('terminal.enterPin');
 
   return (
     <View className="flex-1" style={{ backgroundColor: settings.backgroundColor }}>
