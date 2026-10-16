@@ -3,6 +3,7 @@ import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
+import { getErrorMessage } from '@/api/error-message';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { useTerminalSettings } from '@/context/terminal-settings-context';
 import { useI18n } from '@/i18n/i18n-context';
@@ -23,7 +24,7 @@ type Draft = {
 
 export function TerminalSettingsScreen({ onBack }: Props) {
   const { companySlug, logout, verifyPassword } = useAdminAuth();
-  const { settings, updateSettings, resetOnboarding } = useTerminalSettings();
+  const { settings, saveSettings, resetOnboarding } = useTerminalSettings();
   const { t } = useI18n();
 
   const [unlocked, setUnlocked] = useState(false);
@@ -49,10 +50,18 @@ export function TerminalSettingsScreen({ onBack }: Props) {
     }
   }
 
+  async function doReset() {
+    try {
+      await resetOnboarding();
+    } catch (e) {
+      Alert.alert(t('errors.title'), getErrorMessage(e, t));
+    }
+  }
+
   function handleReset() {
     Alert.alert(t('settings.resetConfirmTitle'), t('settings.resetConfirmMessage'), [
       { text: t('settings.resetConfirmCancel'), style: 'cancel' },
-      { text: t('settings.resetConfirmAccept'), style: 'destructive', onPress: resetOnboarding },
+      { text: t('settings.resetConfirmAccept'), style: 'destructive', onPress: doReset },
     ]);
   }
 
@@ -62,13 +71,17 @@ export function TerminalSettingsScreen({ onBack }: Props) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
+      quality: 0.3, // el servidor admite como máximo ~1,1 MB de imagen
       allowsEditing: true,
       aspect: [1, 1],
+      base64: true,
     });
 
-    if (!result.canceled && result.assets[0]) {
-      setDraft((prev) => ({ ...prev, logoUri: result.assets[0].uri }));
+    const asset = result.assets?.[0];
+    if (!result.canceled && asset?.base64) {
+      const mime = asset.base64.startsWith('/9j/') ? 'image/jpeg' : 'image/png';
+      const logoUri = `data:${mime};base64,${asset.base64}`;
+      setDraft((prev) => ({ ...prev, logoUri }));
     }
   }
 
@@ -81,9 +94,13 @@ export function TerminalSettingsScreen({ onBack }: Props) {
     );
   }
 
-  function handleSave() {
-    updateSettings(draft);
-    onBack();
+  async function handleSave() {
+    try {
+      await saveSettings(draft);
+      onBack();
+    } catch (e) {
+      Alert.alert(t('errors.title'), getErrorMessage(e, t));
+    }
   }
 
   function handleBackPress() {
