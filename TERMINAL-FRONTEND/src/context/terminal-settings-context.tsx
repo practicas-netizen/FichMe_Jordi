@@ -1,23 +1,19 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, useContext, useState, type ReactNode } from 'react';
+import { getSettings, updateSettings as updateSettingsApi, type TerminalSettingsDto } from '@/api/api';
 
 export type DateFormatOption = 'short' | 'long';
 
-type TerminalSettings = {
-  onboardingCompleted: boolean;
-  companyName: string;
-  logoUri: string | null;
-  backgroundColor: string;
-  pinButtonColor: string;
-  dateFormat: DateFormatOption;
-};
+type TerminalSettings = TerminalSettingsDto;
 
 type TerminalSettingsContextType = {
   settings: TerminalSettings;
   isLoadingSettings: boolean;
-  updateSettings: (partial: Partial<TerminalSettings>) => void;
-  completeOnboarding: () => void;
-  resetOnboarding: () => void;
+  settingsLoadFailed: boolean;
+  loadSettings: () => Promise<void>;
+  updateSettings: (partial: Partial<TerminalSettings>) => void; // solo local: vista previa
+  saveSettings: (partial: Partial<TerminalSettings>) => Promise<void>; // PATCH al servidor
+  completeOnboarding: () => Promise<void>;
+  resetOnboarding: () => Promise<void>;
 };
 
 const defaultSettings: TerminalSettings = {
@@ -29,56 +25,58 @@ const defaultSettings: TerminalSettings = {
   dateFormat: 'long',
 };
 
-const STORAGE_KEY = '@bridgeone-terminal/terminal-settings';
-const SAVE_DELAY_MS = 500; // evita escribir en el almacenamiento en cada frame mientras se arrastra un color
-
 const TerminalSettingsContext = createContext<TerminalSettingsContextType | undefined>(undefined);
 
 export function TerminalSettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<TerminalSettings>(defaultSettings);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [settingsLoadFailed, setSettingsLoadFailed] = useState(false);
 
-  useEffect(() => {
-    async function loadSettings() {
-      try {
-        const saved = await AsyncStorage.getItem(STORAGE_KEY);
-        if (saved) setSettings(JSON.parse(saved));
-      } catch (e) {
-        console.warn('No se pudo leer la configuración guardada', e);
-      } finally {
-        setIsLoadingSettings(false);
-      }
+  // Lee los ajustes del servidor. Se llama desde RootFlow cuando hay token.
+  async function loadSettings() {
+    setIsLoadingSettings(true);
+    setSettingsLoadFailed(false);
+    try {
+      setSettings(await getSettings());
+    } catch {
+      setSettingsLoadFailed(true);
+    } finally {
+      setIsLoadingSettings(false);
     }
-    loadSettings();
-  }, []);
+  }
 
-  useEffect(() => {
-    if (isLoadingSettings) return;
-
-    const timeoutId = setTimeout(() => {
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch((e) =>
-        console.warn('No se pudo guardar la configuración', e)
-      );
-    }, SAVE_DELAY_MS);
-
-    return () => clearTimeout(timeoutId);
-  }, [settings, isLoadingSettings]);
-
+  // Cambia solo el estado local (vista previa mientras se eligen colores, etc.).
   function updateSettings(partial: Partial<TerminalSettings>) {
     setSettings((prev) => ({ ...prev, ...partial }));
   }
 
-  function completeOnboarding() {
-    setSettings((prev) => ({ ...prev, onboardingCompleted: true }));
+  // Envía los cambios al servidor y se queda con lo que este devuelve.
+  // Si falla, el error sube a quien la llamó para que lo muestre.
+  async function saveSettings(partial: Partial<TerminalSettings>) {
+    const saved = await updateSettingsApi(partial);
+    setSettings(saved);
   }
 
-  function resetOnboarding() {
-    setSettings(defaultSettings);
+  async function completeOnboarding() {
+    await saveSettings({ ...settings, onboardingCompleted: true });
+  }
+
+  async function resetOnboarding() {
+    await saveSettings(defaultSettings);
   }
 
   return (
     <TerminalSettingsContext.Provider
-      value={{ settings, isLoadingSettings, updateSettings, completeOnboarding, resetOnboarding }}>
+      value={{
+        settings,
+        isLoadingSettings,
+        settingsLoadFailed,
+        loadSettings,
+        updateSettings,
+        saveSettings,
+        completeOnboarding,
+        resetOnboarding,
+      }}>
       {children}
     </TerminalSettingsContext.Provider>
   );

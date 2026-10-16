@@ -9,6 +9,7 @@ import { BACKGROUND_COLORS, PIN_BUTTON_COLORS } from '@/constants/palette';
 import { ColorField } from '@/components/color-field';
 import { TerminalPreview } from '@/components/terminal-preview';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { getErrorMessage } from '@/api/error-message';
 
 const STEPS = ['company', 'colors', 'pin', 'date'] as const;
 
@@ -18,6 +19,7 @@ export function OnboardingScreen() {
 
   const [stepIndex, setStepIndex] = useState(0);
   const step = STEPS[stepIndex];
+  const [isSaving, setIsSaving] = useState(false);
 
   async function pickLogo() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -25,17 +27,22 @@ export function OnboardingScreen() {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
+      quality: 0.3,
       allowsEditing: true,
       aspect: [1, 1],
+      base64: true,
     });
 
-    if (!result.canceled && result.assets[0]) {
-      updateSettings({ logoUri: result.assets[0].uri });
+    const asset = result.assets?.[0];
+    if (!result.canceled && asset?.base64) {
+      const mime = asset.base64.startsWith('/9j/') ? 'image/jpeg' : 'image/png';
+      updateSettings({ logoUri: `data:${mime};base64,${asset.base64}` });
     }
   }
 
-  function goNext() {
+  async function goNext() {
+    if (isSaving) return;
+
     // En el primer paso, nombre y logo son obligatorios
     if (step === 'company' && (!settings.companyName.trim() || !settings.logoUri)) {
       Alert.alert(t('onboarding.missingFieldsTitle'), t('onboarding.missingFieldsMessage'));
@@ -43,7 +50,14 @@ export function OnboardingScreen() {
     }
 
     if (stepIndex === STEPS.length - 1) {
-      completeOnboarding();
+      setIsSaving(true);
+      try {
+        await completeOnboarding();
+      } catch (e) {
+        Alert.alert(t('errors.title'), getErrorMessage(e, t));
+      } finally {
+        setIsSaving(false);
+      }
       return;
     }
     setStepIndex((i) => i + 1);
@@ -157,7 +171,11 @@ export function OnboardingScreen() {
               {t('onboarding.back')}
             </Text>
           </Pressable>
-          <Pressable onPress={goNext} style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="rounded-lg bg-blue-600 px-6 py-3">
+          <Pressable
+            onPress={goNext}
+            disabled={isSaving}
+            style={({ pressed }) => [{ opacity: pressed || isSaving ? 0.7 : 1 }]}
+            className="rounded-lg bg-blue-600 px-6 py-3">
             <Text className="font-semibold text-white">
               {stepIndex === STEPS.length - 1 ? t('onboarding.finish') : t('onboarding.next')}
             </Text>

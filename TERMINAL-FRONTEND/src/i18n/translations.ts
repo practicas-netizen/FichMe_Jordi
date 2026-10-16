@@ -30,9 +30,9 @@ export const translations = {
     terminal: {
       enterPin: 'Introduce tu PIN',
       success: 'Fichaje registrado',
+      error: 'PIN incorrecto',
       checkedIn: 'Entrada registrada',
       checkedOut: 'Salida registrada',
-      error: 'PIN incorrecto',
     },
     settings: {
       lockedTitle: 'Administrar terminal',
@@ -69,6 +69,9 @@ export const translations = {
       submit: 'Activar',
     },
     errors: {
+      title: 'Error',
+      retry: 'Reintentar',
+      settingsLoad: 'No se pudo cargar la configuración de la terminal.',
       network: 'Sin conexión con el servidor. Comprueba la red e inténtalo de nuevo.',
       generic: 'Ha ocurrido un error. Inténtalo de nuevo.',
       ACTIVATION_CODE_NOT_FOUND: 'El código no existe',
@@ -76,6 +79,8 @@ export const translations = {
       ACTIVATION_CODE_EXPIRED: 'Este código ha caducado',
       EMPLOYEE_PIN_INVALID: 'PIN incorrecto',
       TOO_MANY_PIN_ATTEMPTS: 'Demasiados intentos. Espera un momento.',
+      DEVICE_TOKEN_INVALID: 'Esta terminal ya no está vinculada.',
+      DEVICE_REVOKED: 'Esta terminal ha sido desvinculada.',
     },
   },
   en: {
@@ -109,9 +114,9 @@ export const translations = {
     terminal: {
       enterPin: 'Enter your PIN',
       success: 'Clock-in recorded',
+      error: 'Incorrect PIN',
       checkedIn: 'Clock-in recorded',
       checkedOut: 'Clock-out recorded',
-      error: 'Incorrect PIN',
     },
     settings: {
       lockedTitle: 'Manage terminal',
@@ -148,6 +153,9 @@ export const translations = {
       submit: 'Activate',
     },
     errors: {
+      title: 'Error',
+      retry: 'Retry',
+      settingsLoad: 'Could not load the terminal settings.',
       network: 'No connection to the server. Check your network and try again.',
       generic: 'Something went wrong. Please try again.',
       ACTIVATION_CODE_NOT_FOUND: 'The code does not exist',
@@ -155,6 +163,8 @@ export const translations = {
       ACTIVATION_CODE_EXPIRED: 'This code has expired',
       EMPLOYEE_PIN_INVALID: 'Incorrect PIN',
       TOO_MANY_PIN_ATTEMPTS: 'Too many attempts. Please wait a moment.',
+      DEVICE_TOKEN_INVALID: 'This terminal is no longer linked.',
+      DEVICE_REVOKED: 'This terminal has been unlinked.',
     },
   },
 } as const;
