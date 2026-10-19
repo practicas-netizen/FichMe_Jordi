@@ -1,18 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, Matches, MaxLength } from 'class-validator';
 
-export class EmployeeCreateDto{
-     @ApiProperty({ example: 1 })
-    id!: number;
-    
-    @ApiProperty({ example: 'Jordi' })
-    name!: string;
+export class EmployeeCreateDto {
+  @ApiProperty({ example: 'Jordi' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  name!: string;
 
-    @ApiProperty({ example: '123456' })
-    pin!: number;
-
-    @ApiProperty({ example: true })
-    active!: boolean;
-
-    @ApiProperty({ example: '2026-10-02T09:00:29.669Z' })
-    createdAt!: Date;  
+  @ApiProperty({ example: '123456', description: '6 dígitos, único dentro de la empresa' })
+  @IsString()
+  @Matches(/^[0-9]{6}$/, { message: 'pin debe tener exactamente 6 dígitos' })
+  pin!: string;
 }

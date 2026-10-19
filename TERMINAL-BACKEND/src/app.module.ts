@@ -6,6 +6,7 @@ import { EmployeesModule } from './employees/employees.module';
 import { TerminalModule } from './terminal/terminal.module';
 import { TimeEntriesModule } from './time-entries/time-entries.module';
 import { AdminController } from './admin/admin.controller';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
  imports: [
@@ -26,7 +27,8 @@ import { AdminController } from './admin/admin.controller';
   }),
   EmployeesModule,
   TerminalModule,
-  TimeEntriesModule
+  TimeEntriesModule,
+  CompaniesModule,
 ],
   controllers: [AppController, AdminController],
 })

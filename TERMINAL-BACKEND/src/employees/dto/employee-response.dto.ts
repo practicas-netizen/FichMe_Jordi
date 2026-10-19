@@ -4,6 +4,9 @@ import { ApiProperty } from "@nestjs/swagger";
 export class EmployeeResponseDto{
     @ApiProperty({ example: 1 })
     id!: number;
+
+    @ApiProperty({ example: 1 })
+    companyId!: number;
     
     @ApiProperty({ example: 'Jordi' })
     name!: string;
