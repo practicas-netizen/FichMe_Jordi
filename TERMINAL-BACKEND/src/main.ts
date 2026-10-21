@@ -10,12 +10,20 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const apiPort = Number(configService.getOrThrow('API_PORT'));
   const enableCors = configService.getOrThrow('ENABLE_CORS') === 'true';
-  const config = new DocumentBuilder()
+const config = new DocumentBuilder()
     .setTitle('Swagger')
-    .setDescription('Aqui és donde va a salir todo los enpoints (admin, empleados, terminales...) que se vayan haciendo durante el proyecto.')
+    .setDescription('Ver endpoints del proyecto')
     .setVersion('1.0')
     .addBearerAuth()
     .addApiKey({ type: 'apiKey', in: 'header', name: 'x-admin-key' }, 'admin-key')
+    .addTag('App')
+    .addTag('Admin')
+    .addTag('Admin · Empresas')
+    .addTag('Admin · Empleados')
+    .addTag('Admin · Tablets')
+    .addTag('Admin · Fichajes')
+    .addTag('Terminal')
+    .addTag('TimeEntries')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
