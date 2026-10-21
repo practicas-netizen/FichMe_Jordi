@@ -7,6 +7,7 @@ import { TerminalModule } from './terminal/terminal.module';
 import { TimeEntriesModule } from './time-entries/time-entries.module';
 import { AdminController } from './admin/admin.controller';
 import { CompaniesModule } from './companies/companies.module';
+import { TabletsModule } from './tablets/tablets.module';
 
 @Module({
  imports: [
@@ -26,6 +27,7 @@ import { CompaniesModule } from './companies/companies.module';
     }),
   }),
   EmployeesModule,
+  TabletsModule,
   TerminalModule,
   TimeEntriesModule,
   CompaniesModule,
