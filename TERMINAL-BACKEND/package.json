@@ -7,7 +7,16 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "build": "nest build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +41,8 @@
     "@nestjs/cli": "^12.0.8",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^26.6.3",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   }

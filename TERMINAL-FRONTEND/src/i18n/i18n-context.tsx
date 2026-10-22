@@ -45,7 +45,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// "Gancho" (hook) que usan las pantallas para acceder a la caja.
 // En vez de escribir useContext(I18nContext) en cada pantalla,
 // escribimos simplemente useI18n()
 export function useI18n() {
