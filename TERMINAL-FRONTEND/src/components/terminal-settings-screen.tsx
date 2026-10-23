@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+import { pickLogoImage } from '@/utils/logo';
 
 import { getErrorMessage } from '@/api/error-message';
 import { useAdminAuth } from '@/context/admin-auth-context';
@@ -66,22 +66,11 @@ export function TerminalSettingsScreen({ onBack }: Props) {
   }
 
   async function pickLogo() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.3, // el servidor admite como máximo ~1,1 MB de imagen
-      allowsEditing: true,
-      aspect: [1, 1],
-      base64: true,
-    });
-
-    const asset = result.assets?.[0];
-    if (!result.canceled && asset?.base64) {
-      const mime = asset.base64.startsWith('/9j/') ? 'image/jpeg' : 'image/png';
-      const logoUri = `data:${mime};base64,${asset.base64}`;
-      setDraft((prev) => ({ ...prev, logoUri }));
+    try {
+      const logoUri = await pickLogoImage();
+      if (logoUri) setDraft((prev) => ({ ...prev, logoUri }));
+    } catch (e) {
+      Alert.alert(t('errors.title'), getErrorMessage(e, t));
     }
   }
 

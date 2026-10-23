@@ -29,13 +29,16 @@ export function TerminalClock({ dateFormat, locale, textColor, mutedColor }: Pro
     return () => clearInterval(interval);
   }, []);
 
+  // Poner la primera letra en mayúscula y las demás en minúscula
+  const date = formatDate(now, dateFormat, locale);
+
   return (
-    <View>
+    <View className="items-center">
       <Text style={{ color: textColor }} className="text-6xl font-bold">
         {formatTime(now)}
       </Text>
-      <Text style={{ color: mutedColor }} className="mt-2 text-base capitalize">
-        {formatDate(now, dateFormat, locale)}
+      <Text style={{ color: mutedColor }} className="mt-2 text-center text-base">
+        {date.charAt(0).toUpperCase() + date.slice(1)}
       </Text>
     </View>
   );

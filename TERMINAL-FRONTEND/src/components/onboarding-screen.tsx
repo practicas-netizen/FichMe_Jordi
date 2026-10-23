@@ -10,6 +10,7 @@ import { ColorField } from '@/components/color-field';
 import { TerminalPreview } from '@/components/terminal-preview';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { getErrorMessage } from '@/api/error-message';
+import { pickLogoImage } from '@/utils/logo';
 
 const STEPS = ['company', 'colors', 'pin', 'date'] as const;
 
@@ -22,21 +23,11 @@ export function OnboardingScreen() {
   const [isSaving, setIsSaving] = useState(false);
 
   async function pickLogo() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.3,
-      allowsEditing: true,
-      aspect: [1, 1],
-      base64: true,
-    });
-
-    const asset = result.assets?.[0];
-    if (!result.canceled && asset?.base64) {
-      const mime = asset.base64.startsWith('/9j/') ? 'image/jpeg' : 'image/png';
-      updateSettings({ logoUri: `data:${mime};base64,${asset.base64}` });
+    try {
+      const logoUri = await pickLogoImage();
+      if (logoUri) updateSettings({ logoUri });
+    } catch (e) {
+      Alert.alert(t('errors.title'), getErrorMessage(e, t));
     }
   }
 
