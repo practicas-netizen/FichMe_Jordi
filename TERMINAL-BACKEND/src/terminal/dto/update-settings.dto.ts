@@ -35,6 +35,6 @@ export class UpdateSettingsDto {
   @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @IsString()
-  @MaxLength(1_500_000) // 1,1 MB de imagen en base64
+  @MaxLength(7_000_000) 
   logoUri?: string | null;
 }

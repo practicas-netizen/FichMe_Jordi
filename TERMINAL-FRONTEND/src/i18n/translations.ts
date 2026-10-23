@@ -1,3 +1,5 @@
+import { LogoTooLargeError } from "@/utils/logo";
+
 export const translations = {
   es: {
     login: {
@@ -33,6 +35,10 @@ export const translations = {
       error: 'PIN incorrecto',
       checkedIn: 'Entrada registrada',
       checkedOut: 'Salida registrada',
+      confirmationTitle: 'Fichaje registrado correctamente',
+      confirmationAutoReturn: 'La pantalla volverá al teclado en unos segundos.',
+      confirmationContinue: 'Volver al teclado',
+      sending: 'Registrando fichaje...',
     },
     settings: {
       lockedTitle: 'Administrar terminal',
@@ -81,6 +87,7 @@ export const translations = {
       TOO_MANY_PIN_ATTEMPTS: 'Demasiados intentos. Espera un momento.',
       DEVICE_TOKEN_INVALID: 'Esta terminal ya no está vinculada.',
       DEVICE_REVOKED: 'Esta terminal ha sido desvinculada.',
+      logoTooLarge: 'La imagen del logo no puede superar los 5MB.',
     },
   },
   en: {
@@ -117,6 +124,10 @@ export const translations = {
       error: 'Incorrect PIN',
       checkedIn: 'Clock-in recorded',
       checkedOut: 'Clock-out recorded',
+      confirmationTitle: 'Clock-in recorded successfully',
+      confirmationAutoReturn: 'The screen will return to the keypad in a few seconds.',
+      confirmationContinue: 'Back to keypad',
+      sending: 'Recording clock-in...',
     },
     settings: {
       lockedTitle: 'Manage terminal',
@@ -165,6 +176,7 @@ export const translations = {
       TOO_MANY_PIN_ATTEMPTS: 'Too many attempts. Please wait a moment.',
       DEVICE_TOKEN_INVALID: 'This terminal is no longer linked.',
       DEVICE_REVOKED: 'This terminal has been unlinked.',
+      LogoTooLarge: 'The logo image must not exceed 5MB.',
     },
   },
 } as const;

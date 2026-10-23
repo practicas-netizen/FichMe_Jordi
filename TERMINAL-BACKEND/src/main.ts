@@ -37,7 +37,7 @@ const config = new DocumentBuilder()
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
-  app.useBodyParser('json', { limit: '2mb' })
+  app.useBodyParser('json', { limit: '8mb' })
 
   await app.listen(apiPort);
 }

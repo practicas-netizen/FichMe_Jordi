@@ -45,7 +45,7 @@ export class TabletsService {
 
         throw new InternalServerErrorException({
             statusCode: 500,
-            code: 'ACTIAVTION_CODE_GENERATION_FAILED',
+            code: 'ACTIVATION_CODE_GENERATION_FAILED',
             message: 'No se ha podido generar un código único, inténtalo de nuevo',
         });
     }
